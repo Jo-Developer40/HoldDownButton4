@@ -85,6 +85,7 @@ struct DemoView_: View {
                         externalStatus: .constant(nil),
                         duration: 2,
                         onStateChange: { status in
+                            // your action here
                             print("Status geändert: \(status)")
                         }
                     )
@@ -95,6 +96,7 @@ struct DemoView_: View {
                         duration: 2,
                         statusTextColor: .white,
                         onStateChange: { status in
+                            // your action here
                             print("Status geändert: \(status)")
                         },
                         statusTexts: [
