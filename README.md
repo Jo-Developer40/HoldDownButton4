@@ -12,7 +12,7 @@ New in version 4 is the additional external control of the ButtonStatus. For exa
 - **External control of the ButtonStatus
 
 <p align="center">
-  <img src="Button2/docs.docc/Resources/HoldDownButton4.gif" width="300">
+  <img src="HoldDownButton4/docs.docc/Resources/HoldDownButton4.gif" width="300">
 </p>
 
 
@@ -21,13 +21,8 @@ New in version 4 is the additional external control of the ButtonStatus. For exa
 - `ContentView`: Start view with navigation and example of button usage.
 - `DemoView 1` and `DemoView 2`: Example pages for Buttons
 
-## Function
-  
-<p align="center">
-  <img src="Button2/docs.docc/Resources/FlowChart1.png" width="300">
-</p>
 
-
+https://github.com/Jo-Developer40/HoldDownButton4/blob/main/HoldDownButton4/docs.docc/Resources/HoldDownButton4.gif
 ## How to use
 
 The button returns the status with onStateChange:
