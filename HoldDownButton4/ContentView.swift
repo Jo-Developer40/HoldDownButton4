@@ -8,13 +8,13 @@
 
 import SwiftUI
 
-    /// Pages
+// MARK: -  App Views Enumeration
 enum AppView: Hashable {
     case demoView
     case settingsView
 }
 
-
+// MARK: -  Content View
 struct ContentView: View {
     @Environment(\.colorScheme) var colorScheme
     @State private var path: [AppView] = []
@@ -46,13 +46,13 @@ struct ContentView: View {
             }
         }
     }
-        /// Example of use:
+    // MARK: - Handle Button Status Change
     func handleButtonStatus(_ status: ButtonStatus) {
-        // Hier kannst du beliebige Aktionen ausführen
+        // Here you can perform any actions you like.
         print("Status geändert: \(status.rawValue)")
     }
 }
-
+// MARK: -  Helper
 struct NavigationButton: View {
     @Binding var path: [AppView]
     
@@ -72,6 +72,7 @@ struct NavigationButton: View {
     }
 }
 
+// MARK: -  Demo View
 struct DemoView_: View {
     @Binding var path: [AppView]
     @State private var showArrow = true
@@ -80,6 +81,7 @@ struct DemoView_: View {
         ScrollViewReader { proxy in
             ScrollView {
                 VStack(spacing: 30) {
+                    // MARK: - Simple HoldDownButton:
                     Text("Simple HoldDownButton:")
                     HoldDownButton(
                         externalStatus: .constant(nil),
@@ -89,7 +91,7 @@ struct DemoView_: View {
                             print("Status geändert: \(status)")
                         }
                     )
-                    
+                    // MARK: - HoldDownButton colored:
                     Text("HoldDownButton colored:")
                     HoldDownButton(
                         externalStatus: .constant(nil),
@@ -114,8 +116,9 @@ struct DemoView_: View {
                     )
                     
                     Divider()
+                    // MARK: - Color Information
                     VStack(alignment: .leading, spacing: 20) {
-                        Text("Du kannst alle Farben der Buttons verwenden, die SwiftUI als Color bereitstellt. Dazu gehören:")
+                        Text("You can use all colors provided by SwiftUI as colors. These include:")
                             .padding(10)
                         Text("Predefined System Colors:")
                             .font(.headline)
@@ -127,9 +130,9 @@ struct DemoView_: View {
                         Text("Color.primary, Color.accentColor Color.secondary, Color.accentColor, Color.background, usw.")
                         //.font(.footnote)
                             .padding(.leading, 10)
-                        Text("Diese Farben passen sich automatisch an den Light/Dark Mode und die Systemdarstellung an.")
+                        Text("These colors automatically adjust to Light/Dark Mode and the system display.")
                             .font(.caption2)
-                        Text("Eigene Farben:")
+                        Text("Custom colors:")
                             .font(.headline)
                         Text("Color(red: 0.5, green: 0.2, blue: 0.7) oder    Color(hex: FF5733)")
                         //.font(.footnote)
@@ -139,7 +142,8 @@ struct DemoView_: View {
                 .padding()
                 .navigationTitle("Demo 2")
                 .toolbar {
-                    /*ToolbarItem(placement: .navigationBarTrailing) {
+                    /* // Activate button if required
+                     ToolbarItem(placement: .navigationBarTrailing) {
                      NavigationButton(
                      path: $path,
                      title: "Weiter",
@@ -149,6 +153,7 @@ struct DemoView_: View {
                 }
             }
             .overlay(
+                // MARK: - Arrow Indicator
                 Group {
                     if showArrow {
                         Image(systemName: "chevron.down")
@@ -166,6 +171,7 @@ struct DemoView_: View {
     }
 }
 
+// MARK: -  Settings View
 struct SettingsView_: View {
     @Binding var path: [AppView]
     
@@ -186,12 +192,11 @@ struct SettingsView_: View {
                     }
                 }
             }
-        }
-         */
+        } */
     }
 }
 
-// MARK: - Preview
+// MARK: -  HoldDownButton View with External Control
 struct HoldDownButtonView: View {
     @State private var extStatus: ButtonStatus? = nil
     
@@ -203,14 +208,11 @@ struct HoldDownButtonView: View {
                 .font(.title)
                 .fontWeight(.bold)
                 .foregroundColor(.red)
-            
             Text("HoldDownButton \nwith additional external control:")
                 .multilineTextAlignment(.center)
             Spacer()
             Divider()
-            
             Text("Normal control:")
-            
             HoldDownButton(
                 externalStatus: $extStatus,
                 onStateChange: { status in
@@ -229,8 +231,6 @@ struct HoldDownButtonView: View {
                  .ready: .gray
                  ] */
             )
-
-
             Text("External control:")
             HStack {
                 ForEach(ButtonStatus.allCases, id: \.self) { status in
@@ -249,7 +249,7 @@ struct HoldDownButtonView: View {
 }
 
 
-
+// MARK: -  Preview
 #Preview {
     ContentView()
 }

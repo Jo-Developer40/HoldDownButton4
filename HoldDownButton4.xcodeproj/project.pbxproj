@@ -6,13 +6,8 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		38286C702ECB844F00EB68A4 /* HoldDownButton2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38286C6F2ECB843B00EB68A4 /* HoldDownButton2.swift */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXFileReference section */
 		38286C2C2ECB824600EB68A4 /* HoldDownButton4.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HoldDownButton4.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		38286C6F2ECB843B00EB68A4 /* HoldDownButton2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoldDownButton2.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -39,7 +34,6 @@
 			children = (
 				38286C2E2ECB824600EB68A4 /* HoldDownButton4 */,
 				38286C2D2ECB824600EB68A4 /* Products */,
-				38286C6F2ECB843B00EB68A4 /* HoldDownButton2.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -125,7 +119,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				38286C702ECB844F00EB68A4 /* HoldDownButton2.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,12 +7,13 @@
 //
 //  A button with start/pause/stop status and a loading bar.
 //  A short tap starts/pauses, a long press stops and triggers an action.
+//  A
 
 
 import SwiftUI
 import Combine
 
-// Button status enumeration
+// MARK: -  Button status enumeration
 public enum ButtonStatus: String, CaseIterable {
     case start, pause, stop, ready
 
@@ -24,7 +25,7 @@ public enum ButtonStatus: String, CaseIterable {
     }
 }
 
-
+// MARK: -  Hold Timer for progress bar
 class HoldTimer: ObservableObject {
     @Published private(set) var progress: CGFloat = 0
     @Published private(set) var isActive = false
@@ -50,13 +51,13 @@ class HoldTimer: ObservableObject {
                 }
             }
     }
-
+    // MARK: -  Stop the timer
     func stop() {
         isActive = false
         timer?.cancel()
         timer = nil
     }
-
+    // MARK: -
     func reset() {
         stop()
         progress = 0
@@ -64,6 +65,7 @@ class HoldTimer: ObservableObject {
     }
 }
 
+// MARK: - HoldDownButton View
 struct HoldDownButton: View {
     @Binding var externalStatus: ButtonStatus?
     @State private var internalStatus: ButtonStatus = .ready
@@ -80,6 +82,7 @@ struct HoldDownButton: View {
     var statusTexts: [ButtonStatus: String]? = nil
     var statusColors: [ButtonStatus: Color]? = nil
     
+    // MARK: -  Default texts and colors
     private let defaultStatusTexts: [ButtonStatus: String] = [
         .start: "run",
         .pause: "pause",
@@ -93,22 +96,23 @@ struct HoldDownButton: View {
         .ready: .blue,
     ]
     
-    // Berechneter Status (extern oder intern)
+    // MARK: -  Helper
+    // Calculated status (external or internal)
     private var effectiveStatus: ButtonStatus {
         externalStatus ?? internalStatus
     }
     
-    // Benutzerdefinierte Texte
+    // Custom texts
     private func text(for status: ButtonStatus) -> String {
         statusTexts?[status] ?? defaultStatusTexts[status] ?? ""
     }
     
-    // Benutzerdefinierte Farben
+    // Custom colors
     private func color(for status: ButtonStatus) -> Color {
         statusColors?[status] ?? defaultStatusColors[status] ?? .gray
     }
     
-    
+    // MARK: - Body
     var body: some View {
         VStack {
             Text(text(for: effectiveStatus)) // Button
@@ -118,7 +122,7 @@ struct HoldDownButton: View {
                 .frame(width: 150, height: 40)
                 .background {
                     ZStack(alignment: .leading) {
-                        Rectangle() // Button Background
+                        Rectangle()
                             .fill(color(for: effectiveStatus))
                         if effectiveStatus == .start || effectiveStatus == .pause || effectiveStatus == .ready {
                             Rectangle() // progress bar
@@ -136,7 +140,7 @@ struct HoldDownButton: View {
                 .animation(.spring(response: 0.25, dampingFraction: 0.7), value: isHolding)
                 .gesture(tapGesture.exclusively(before: longPressGesture))
             
-            // Statusanzeige unterhalb des Buttons (optional)
+            // Status display below the button (optional)
             /*
             Text("Status: \(effectiveStatus.rawValue)")
                 .font(.headline)
@@ -145,7 +149,7 @@ struct HoldDownButton: View {
                 .padding(.top, 8)
             */
         }
-        // Initialisierung beim Anzeigen
+        // Initialization during display
         .onAppear {
             holdTimer.reset()
             internalStatus = .ready
@@ -155,7 +159,7 @@ struct HoldDownButton: View {
         }
     }
     
-    /// Tap-Geste: Start/Pause switching
+    // MARK: -  Tap gesture: Start/Pause switching
     var tapGesture: some Gesture {
         TapGesture()
             .onEnded {
@@ -169,7 +173,7 @@ struct HoldDownButton: View {
             }
     }
     
-    /// LongPress-Geste: Set stop
+    // MARK: -  LongPress gesture: Set stop
     var longPressGesture: some Gesture {
         LongPressGesture(minimumDuration: duration)
             .onChanged { _ in
