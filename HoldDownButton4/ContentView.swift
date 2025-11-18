@@ -18,12 +18,13 @@ enum AppView: Hashable {
 struct ContentView: View {
     @Environment(\.colorScheme) var colorScheme
     @State private var path: [AppView] = []
+    @State private var isButtonEnabled: Bool = true
     
     var body: some View {
         NavigationStack(path: $path) {
             ZStack {
                 VStack(spacing: 45) {
-                    HoldDownButtonView()
+                    HoldDownButtonView(path: $path, isButtonEnabled: $isButtonEnabled)
                 }
                 .navigationTitle("Demo 1")
                 .navigationBarTitleDisplayMode(.inline)
@@ -38,7 +39,7 @@ struct ContentView: View {
                 .navigationDestination(for: AppView.self) { view in
                     switch view {
                     case .demoView:
-                        DemoView_(path: $path)
+                        DemoView_(path: $path, isButtonEnabled: $isButtonEnabled)
                     case .settingsView:
                         SettingsView_(path: $path)
                     }
@@ -75,8 +76,9 @@ struct NavigationButton: View {
 // MARK: -  Demo View
 struct DemoView_: View {
     @Binding var path: [AppView]
+    @Binding var isButtonEnabled: Bool
     @State private var showArrow = true
-    
+
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView {
@@ -113,7 +115,14 @@ struct DemoView_: View {
                             .stop:  .pink,
                             .ready: .cyan
                         ]
-                    )
+                    ) 
+                    .disabled(!isButtonEnabled)
+                    
+                    Toggle(isOn: $isButtonEnabled) {
+                        Text("HoldDownButton ist " + (isButtonEnabled ? "Frei" : "Gesperrt"))
+                    }
+                    .padding(45)
+                    .tint(.blue)
                     
                     Divider()
                     // MARK: - Color Information
@@ -198,6 +207,8 @@ struct SettingsView_: View {
 
 // MARK: -  HoldDownButton View with External Control
 struct HoldDownButtonView: View {
+    @Binding var path: [AppView]
+    @Binding var isButtonEnabled: Bool
     @State private var extStatus: ButtonStatus? = nil
     
     var body: some View {
@@ -217,7 +228,7 @@ struct HoldDownButtonView: View {
                 externalStatus: $extStatus,
                 onStateChange: { status in
                     print("Status changed: \(status)")
-                }
+                },
                 /* statusTexts: [
                  .start: "Start",
                  .pause: "Pause",
@@ -231,6 +242,14 @@ struct HoldDownButtonView: View {
                  .ready: .gray
                  ] */
             )
+            .disabled(!isButtonEnabled)
+            
+            Toggle(isOn: $isButtonEnabled) {
+                Text("HoldDownButton ist " + (isButtonEnabled ? "Frei" : "Gesperrt"))
+            }
+            .padding(45)
+            .tint(.blue)
+            
             Text("External control:")
             HStack {
                 ForEach(ButtonStatus.allCases, id: \.self) { status in

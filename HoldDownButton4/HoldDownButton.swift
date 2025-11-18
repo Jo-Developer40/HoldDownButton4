@@ -72,15 +72,20 @@ struct HoldDownButton: View {
     @State private var isHolding = false /// hold Button (for Animation)
     @StateObject private var holdTimer = HoldTimer() /// Timer for Progress bar
     
+    @Environment(\.isEnabled) private var isEnabled //* NEU ab V4.1.0
+    
+    // MARK: -  Configurable properties
     var duration: CGFloat = 3
     var paddingVertical: CGFloat = 12
     var paddingHorizontal: CGFloat = 25
     var loadingTint: Color = .gray
-    var statusTextColor: Color = .white
-    var onStateChange: (ButtonStatus) -> Void = { _ in }
     
+    // External specifications for texts and colors
     var statusTexts: [ButtonStatus: String]? = nil
     var statusColors: [ButtonStatus: Color]? = nil
+    var statusTextColor: Color = .white
+    
+    var onStateChange: (ButtonStatus) -> Void = { _ in }
     
     // MARK: -  Default texts and colors
     private let defaultStatusTexts: [ButtonStatus: String] = [
@@ -123,7 +128,7 @@ struct HoldDownButton: View {
                 .background {
                     ZStack(alignment: .leading) {
                         Rectangle()
-                            .fill(color(for: effectiveStatus))
+                            .fill(isEnabled ? color(for: effectiveStatus) : Color.gray) // background color oder gray //* NEU ab V4.1.0
                         if effectiveStatus == .start || effectiveStatus == .pause || effectiveStatus == .ready {
                             Rectangle() // progress bar
                                 .fill(loadingTint)
@@ -138,10 +143,10 @@ struct HoldDownButton: View {
                 .contentShape(Capsule())
                 .scaleEffect(isHolding ? 0.95 : 1)
                 .animation(.spring(response: 0.25, dampingFraction: 0.7), value: isHolding)
+                .opacity(isEnabled ? 1.0 : 0.6) //* NEU ab V4.1.0
                 .gesture(tapGesture.exclusively(before: longPressGesture))
             
-            // Status display below the button (optional)
-            /*
+            /* // Status display below the button (optional)
             Text("Status: \(effectiveStatus.rawValue)")
                 .font(.headline)
                 .foregroundStyle(.red)
