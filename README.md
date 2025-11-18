@@ -58,7 +58,7 @@ statusTexts: [
         .stop:  "Stop",
         .ready: "Ready!"
     ],
-    statusColors: [
+statusColors: [
         .start: .indigo,
         .pause: .mint,
         .stop:  .pink,
@@ -69,9 +69,9 @@ statusTexts: [
 
 ## Requirements
 
-- macOS
+- macOS 15
 - Xcode 16
-- SwiftUI
+- SwiftUI 15
 
 ## Getting started
 
@@ -79,4 +79,6 @@ statusTexts: [
 2. Open the project in Xcode.
 3. Run (`Cmd+R`).
 
----
+## License
+Apache License
+Version 2.0, January 2004
