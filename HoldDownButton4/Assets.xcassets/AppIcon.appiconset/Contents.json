@@ -1,6 +1,7 @@
 {
   "images" : [
     {
+      "filename" : "swift-iOS-1024x1024.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -12,6 +13,7 @@
           "value" : "dark"
         }
       ],
+      "filename" : "Swift-1024-dark.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -23,6 +25,7 @@
           "value" : "tinted"
         }
       ],
+      "filename" : "Swift-1024-grey.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
