@@ -15,12 +15,16 @@ import Combine
 
 // MARK: -  Button status enumeration
 public enum ButtonStatus: String, CaseIterable {
-    case start, pause, stop, ready
+    case start
+    case pause
+    case stop
+    case ready
+    case blocked
 
     public var isActive: Bool {
         switch self {
         case .start, .pause: return true
-        case .stop, .ready: return false
+        case .stop, .ready, .blocked: return false
         }
     }
 }
@@ -66,26 +70,40 @@ class HoldTimer: ObservableObject {
 }
 
 // MARK: - HoldDownButton View
-struct HoldDownButton: View {
-    @Binding var externalStatus: ButtonStatus?
+public struct HoldDownButton: View {
     @State private var internalStatus: ButtonStatus = .ready
     @State private var isHolding = false /// hold Button (for Animation)
     @StateObject private var holdTimer = HoldTimer() /// Timer for Progress bar
+    @Environment(\.isEnabled) private var isEnabled //* NEU ab V4.1.x
     
-    @Environment(\.isEnabled) private var isEnabled //* NEU ab V4.1.0
+    // MARK: -  External specifications, Please note the order!
+    @Binding var externalStatus: ButtonStatus?
+    public var duration: CGFloat = 3
+    public var statusTexts: [ButtonStatus: String]? = nil
+    public var statusColors: [ButtonStatus: Color]? = nil
+    public var statusTextColor: Color = .white
+    public var onStateChange: (ButtonStatus) -> Void = { _ in }
     
-    // MARK: -  Configurable properties
-    var duration: CGFloat = 3
-    var paddingVertical: CGFloat = 12
-    var paddingHorizontal: CGFloat = 25
-    var loadingTint: Color = .gray
+    // MARK: -  Initializer for external specifications
+    public init( //* NEU ab V4.1.x
+        externalStatus: Binding<ButtonStatus?>,
+        duration: CGFloat = 3,
+        statusTexts: [ButtonStatus: String]? = nil,
+        statusColors: [ButtonStatus: Color]? = nil,
+        statusTextColor: Color = .white,
+        onStateChange: @escaping (ButtonStatus) -> Void = { _ in }
+    ) {
+        self._externalStatus = externalStatus
+        self.duration = duration
+        self.statusTexts = statusTexts
+        self.statusColors = statusColors
+        self.statusTextColor = statusTextColor
+        self.onStateChange = onStateChange
+    }
     
-    // External specifications for texts and colors
-    var statusTexts: [ButtonStatus: String]? = nil
-    var statusColors: [ButtonStatus: Color]? = nil
-    var statusTextColor: Color = .white
-    
-    var onStateChange: (ButtonStatus) -> Void = { _ in }
+    private var paddingVertical: CGFloat = 12
+    private var paddingHorizontal: CGFloat = 25
+    private var loadingTint: Color = .gray
     
     // MARK: -  Default texts and colors
     private let defaultStatusTexts: [ButtonStatus: String] = [
@@ -93,18 +111,23 @@ struct HoldDownButton: View {
         .pause: "pause",
         .stop:  "stop",
         .ready: "ready",
+        .blocked: "blocked" //* NEU ab V4.1.x
     ]
     private let defaultStatusColors: [ButtonStatus: Color] = [
         .start: .green,
         .pause: .yellow,
         .stop:  .red,
         .ready: .blue,
+        .blocked: .gray //* NEU ab V4.1.x
     ]
     
     // MARK: -  Helper
     // Calculated status (external or internal)
     private var effectiveStatus: ButtonStatus {
-        externalStatus ?? internalStatus
+        if !isEnabled { //* NEU ab V4.1.x
+            return .blocked
+        }
+        return externalStatus ?? internalStatus
     }
     
     // Custom texts
@@ -118,7 +141,7 @@ struct HoldDownButton: View {
     }
     
     // MARK: - Body
-    var body: some View {
+    public var body: some View {
         VStack {
             Text(text(for: effectiveStatus)) // Button
                 .foregroundColor(statusTextColor)
@@ -128,7 +151,7 @@ struct HoldDownButton: View {
                 .background {
                     ZStack(alignment: .leading) {
                         Rectangle()
-                            .fill(isEnabled ? color(for: effectiveStatus) : Color.gray) // background color oder gray //* NEU ab V4.1.0
+                            .fill(isEnabled ? color(for: effectiveStatus) : Color.gray) // background color oder gray //* NEU ab V4.1.x
                         if effectiveStatus == .start || effectiveStatus == .pause || effectiveStatus == .ready {
                             Rectangle() // progress bar
                                 .fill(loadingTint)
@@ -143,16 +166,16 @@ struct HoldDownButton: View {
                 .contentShape(Capsule())
                 .scaleEffect(isHolding ? 0.95 : 1)
                 .animation(.spring(response: 0.25, dampingFraction: 0.7), value: isHolding)
-                .opacity(isEnabled ? 1.0 : 0.6) //* NEU ab V4.1.0
+                .opacity(isEnabled ? 1.0 : 0.6) //* NEU ab V4.1.x
                 .gesture(tapGesture.exclusively(before: longPressGesture))
             
-            /* // Status display below the button (optional)
+            // Status display below the button (optional)
             Text("Status: \(effectiveStatus.rawValue)")
                 .font(.headline)
                 .foregroundStyle(.red)
                 .background(.white)
                 .padding(.top, 8)
-            */
+            
         }
         // Initialization during display
         .onAppear {
@@ -168,11 +191,13 @@ struct HoldDownButton: View {
     var tapGesture: some Gesture {
         TapGesture()
             .onEnded {
-                if effectiveStatus == .start {
-                    internalStatus = .pause
-                    holdTimer.reset()
-                } else {
-                    internalStatus = .start
+                if isEnabled {
+                    if effectiveStatus == .start {
+                        internalStatus = .pause
+                    } else {
+                        internalStatus = .start
+                    }
+                    externalStatus = nil
                     holdTimer.reset()
                 }
             }
@@ -182,15 +207,21 @@ struct HoldDownButton: View {
     var longPressGesture: some Gesture {
         LongPressGesture(minimumDuration: duration)
             .onChanged { _ in
-                isHolding = true
-                holdTimer.start(duration: duration)
+                if isEnabled { //* NEU ab V4.1.x
+                    isHolding = true
+                    holdTimer.start(duration: duration)
+                }
             }
             .onEnded { success in
-                isHolding = false
-                holdTimer.reset()
-                internalStatus = .stop
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    internalStatus = .ready
+                if isEnabled { //* NEU ab V4.1.x
+                    isHolding = false
+                    holdTimer.reset()
+                    internalStatus = .stop
+                    externalStatus = nil
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        internalStatus = .ready
+                    }
+             
                 }
             }
     }

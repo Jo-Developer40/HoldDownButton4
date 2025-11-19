@@ -83,47 +83,14 @@ struct DemoView_: View {
         ScrollViewReader { proxy in
             ScrollView {
                 VStack(spacing: 30) {
-                    // MARK: - Simple HoldDownButton:
-                    Text("Simple HoldDownButton:")
-                    HoldDownButton(
-                        externalStatus: .constant(nil),
-                        duration: 2,
-                        onStateChange: { status in
-                            // your action here
-                            print("Status geändert: \(status)")
-                        }
-                    )
-                    // MARK: - HoldDownButton colored:
-                    Text("HoldDownButton colored:")
-                    HoldDownButton(
-                        externalStatus: .constant(nil),
-                        duration: 2,
-                        statusTextColor: .white,
-                        onStateChange: { status in
-                            // your action here
-                            print("Status geändert: \(status)")
-                        },
-                        statusTexts: [
-                            .start: "Run",
-                            .pause: "Pause",
-                            .stop:  "Stop",
-                            .ready: "Ready!"
-                        ],
-                        statusColors: [
-                            .start: .indigo,
-                            .pause: .mint,
-                            .stop:  .pink,
-                            .ready: .cyan
-                        ]
-                    ) 
-                    .disabled(!isButtonEnabled)
-                    
+                    SimpleHoldDownButtonSection()
+                    Divider()
+                    ColoredHoldDownButtonSection(isButtonEnabled: $isButtonEnabled)
                     Toggle(isOn: $isButtonEnabled) {
-                        Text("HoldDownButton ist " + (isButtonEnabled ? "Frei" : "Gesperrt"))
+                        Text("HoldDownButton is " + (isButtonEnabled ? "free" : "Blocked"))
                     }
-                    .padding(45)
+                    .padding(1)
                     .tint(.blue)
-                    
                     Divider()
                     // MARK: - Color Information
                     VStack(alignment: .leading, spacing: 20) {
@@ -226,9 +193,7 @@ struct HoldDownButtonView: View {
             Text("Normal control:")
             HoldDownButton(
                 externalStatus: $extStatus,
-                onStateChange: { status in
-                    print("Status changed: \(status)")
-                },
+                duration: 2,
                 /* statusTexts: [
                  .start: "Start",
                  .pause: "Pause",
@@ -240,15 +205,15 @@ struct HoldDownButtonView: View {
                  .pause: .orange,
                  .stop:  .red,
                  .ready: .gray
-                 ] */
+                 ], */
+                //statusTextColor: .white,
+                onStateChange: { status in
+                    print("Status changed: \(status)")
+                }
             )
             .disabled(!isButtonEnabled)
             
-            Toggle(isOn: $isButtonEnabled) {
-                Text("HoldDownButton ist " + (isButtonEnabled ? "Frei" : "Gesperrt"))
-            }
-            .padding(45)
-            .tint(.blue)
+            Divider()
             
             Text("External control:")
             HStack {
@@ -261,15 +226,71 @@ struct HoldDownButtonView: View {
                     .cornerRadius(8)
                 }
             }
+            Toggle(isOn: $isButtonEnabled) {
+                Text("HoldDownButton is " + (isButtonEnabled ? "free" : "Blocked"))
+            }
+            .padding(35)
+            .tint(.blue)
+            
             Divider()
             Spacer()
         }
     }
 }
 
-
-// MARK: -  Preview
-#Preview {
-    ContentView()
+// Ausgelagerte Funktionen
+private struct SimpleHoldDownButtonSection: View {
+    var body: some View {
+        VStack {
+            Text("Simple HoldDownButton:")
+            HoldDownButton(
+                externalStatus: .constant(nil),
+                duration: 2,
+                onStateChange: { status in
+                    print("Status geändert: \(status)")
+                }
+            )
+        }
+    }
 }
 
+private struct ColoredHoldDownButtonSection: View {
+    @Binding var isButtonEnabled: Bool
+    var body: some View {
+        VStack {
+            Text("HoldDownButton colored:")
+            HoldDownButton(
+                externalStatus: .constant(nil),
+                duration: 2,
+                statusTexts: [
+                    .start: "Run",
+                    .pause: "Pause",
+                    .stop:  "Stop",
+                    .ready: "Ready!"
+                ],
+                statusColors: [
+                    .start: .indigo,
+                    .pause: .mint,
+                    .stop:  .pink,
+                    .ready: .cyan
+                ],
+                statusTextColor: .white,
+                onStateChange: { status in
+                    print("Status geändert: \(status)")
+                }
+            )
+            .disabled(!isButtonEnabled)
+        }
+    }
+}
+
+
+// MARK: -  Preview
+struct HoldDownButtonView_Previews: PreviewProvider {
+    @State static var path: [AppView] = []
+    @State static var isButtonEnabled: Bool = true
+
+    static var previews: some View {
+        HoldDownButtonView(path: $path, isButtonEnabled: $isButtonEnabled)
+    }
+}
