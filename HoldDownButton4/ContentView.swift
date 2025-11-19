@@ -78,71 +78,53 @@ struct DemoView_: View {
     @Binding var path: [AppView]
     @Binding var isButtonEnabled: Bool
     @State private var showArrow = true
-
+    
     var body: some View {
-        ScrollViewReader { proxy in
-            ScrollView {
-                VStack(spacing: 30) {
-                    SimpleHoldDownButtonSection()
-                    Divider()
-                    ColoredHoldDownButtonSection(isButtonEnabled: $isButtonEnabled)
-                    Toggle(isOn: $isButtonEnabled) {
-                        Text("HoldDownButton is " + (isButtonEnabled ? "free" : "Blocked"))
-                    }
-                    .padding(1)
-                    .tint(.blue)
-                    Divider()
-                    // MARK: - Color Information
-                    VStack(alignment: .leading, spacing: 20) {
-                        Text("You can use all colors provided by SwiftUI as colors. These include:")
-                            .padding(10)
-                        Text("Predefined System Colors:")
-                            .font(.headline)
-                        Text(".red, .green, .blue, .yellow, .orange, .purple,\n.pink, .gray, .black, .white, .brown, .mint, .teal,\n.indigo, .cyan.")
-                        //.font(.footnote)
-                            .padding([.leading, .bottom], 10)
-                        Text("System colors:")
-                            .font(.headline)
-                        Text("Color.primary, Color.accentColor Color.secondary, Color.accentColor, Color.background, usw.")
-                        //.font(.footnote)
-                            .padding(.leading, 10)
-                        Text("These colors automatically adjust to Light/Dark Mode and the system display.")
-                            .font(.caption2)
-                        Text("Custom colors:")
-                            .font(.headline)
-                        Text("Color(red: 0.5, green: 0.2, blue: 0.7) oder    Color(hex: FF5733)")
-                        //.font(.footnote)
-                            .padding([.leading, .bottom], 10)
-                    }
+        ScrollView {
+            VStack(spacing: 30) {
+                SimpleHoldDownButtonSection()
+                Divider()
+                ColoredHoldDownButtonSection(isButtonEnabled: $isButtonEnabled)
+                Toggle(isOn: $isButtonEnabled) {
+                    Text("HoldDownButton is " + (isButtonEnabled ? "free" : "Blocked"))
                 }
-                .padding()
-                .navigationTitle("Demo 2")
-                .toolbar {
-                    /* // Activate button if required
-                     ToolbarItem(placement: .navigationBarTrailing) {
-                     NavigationButton(
-                     path: $path,
-                     title: "Weiter",
-                     icon: "chevron.right",
-                     destination: .settingsView)
-                     } */
-                }
+                .padding(1)
+                .tint(.blue)
+                Divider()
+                 VStack(alignment: .leading, spacing: 20) {
+                 Text("You can use all colors provided by SwiftUI as colors. These include:")
+                 .padding(10)
+                 Text("Predefined System Colors:")
+                 .font(.headline)
+                 Text(".red, .green, .blue, .yellow, .orange, .purple,\n.pink, .gray, .black, .white, .brown, .mint, .teal,\n.indigo, .cyan.")
+                 //.font(.footnote)
+                 .padding([.leading, .bottom], 10)
+                 Text("System colors:")
+                 .font(.headline)
+                 Text("Color.primary, Color.accentColor Color.secondary, Color.accentColor, Color.background, etc.")
+                 //.font(.footnote)
+                 .padding(.leading, 10)
+                 Text("These colors automatically adjust to Light/Dark Mode and the system display.")
+                 .font(.caption2)
+                 Text("Custom colors:")
+                 .font(.headline)
+                 Text("Color(red: 0.5, green: 0.2, blue: 0.7) oder    Color(hex: FF5733)")
+                 //.font(.footnote)
+                 .padding([.leading, .bottom], 10)
+                 }
             }
-            .overlay(
-                // MARK: - Arrow Indicator
-                Group {
-                    if showArrow {
-                        Image(systemName: "chevron.down")
-                            .font(.title)
-                            .foregroundColor(.accentColor)
-                            .opacity(0.7)
-                            .padding(.bottom, 20)
-                            .padding(.trailing, 20)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment:
-                                    .bottomTrailing)
-                    }
-                }
-            )
+            .padding()
+            .navigationTitle("Demo 2")
+            .toolbar {
+                /* // Activate button if required
+                 ToolbarItem(placement: .navigationBarTrailing) {
+                 NavigationButton(
+                 path: $path,
+                 title: "Weiter",
+                 icon: "chevron.right",
+                 destination: .settingsView)
+                 } */
+            }
         }
     }
 }
@@ -263,13 +245,13 @@ private struct ColoredHoldDownButtonSection: View {
                 externalStatus: .constant(nil),
                 duration: 2,
                 statusTexts: [
-                    .start: "Run",
+                    .start: "Run!",
                     .pause: "Pause",
                     .stop:  "Stop",
                     .ready: "Ready!"
                 ],
                 statusColors: [
-                    .start: .indigo,
+                    .start: .purple,
                     .pause: .mint,
                     .stop:  .pink,
                     .ready: .cyan
@@ -286,11 +268,10 @@ private struct ColoredHoldDownButtonSection: View {
 
 
 // MARK: -  Preview
-struct HoldDownButtonView_Previews: PreviewProvider {
-    @State static var path: [AppView] = []
+struct ContentView_Previews: PreviewProvider {
     @State static var isButtonEnabled: Bool = true
-
+    
     static var previews: some View {
-        HoldDownButtonView(path: $path, isButtonEnabled: $isButtonEnabled)
+        ContentView()
     }
 }
