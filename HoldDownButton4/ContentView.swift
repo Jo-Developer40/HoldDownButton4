@@ -18,13 +18,23 @@ enum AppView: Hashable {
 struct ContentView: View {
     @Environment(\.colorScheme) var colorScheme
     @State private var path: [AppView] = []
-    @State private var isButtonEnabled: Bool = true
+    
+    @State private var isFirstButtonEnabled: Bool = true // NEW from V4.2.x
+    @State private var firstButtonStatus: ButtonStatus? = nil // NEW from V4.2.x
+    
+    @State private var isSecondButtonEnabled: Bool = true // NEW from V4.2.x
+    @State private var secondButtonStatus: ButtonStatus? = nil // NEW from V4.2.x
+   
+    @State private var isThirdButtonEnabled: Bool = true // NEW from V4.2.x
+    @State private var thirdButtonStatus: ButtonStatus? = nil // NEW from V4.2.x
     
     var body: some View {
         NavigationStack(path: $path) {
             ZStack {
-                VStack(spacing: 45) {
-                    HoldDownButtonView(path: $path, isButtonEnabled: $isButtonEnabled)
+                VStack(spacing: 35) {
+                    HoldDownButtonView(path: $path, isThirdButtonEnabled: $isFirstButtonEnabled)
+                    
+                    HoldDownButtonView(path: $path, isThirdButtonEnabled: $isSecondButtonEnabled)
                 }
                 .navigationTitle("Demo 1")
                 .navigationBarTitleDisplayMode(.inline)
@@ -39,7 +49,7 @@ struct ContentView: View {
                 .navigationDestination(for: AppView.self) { view in
                     switch view {
                     case .demoView:
-                        DemoView_(path: $path, isButtonEnabled: $isButtonEnabled)
+                        DemoView_(path: $path, isThirdButtonEnabled: $isThirdButtonEnabled)
                     case .settingsView:
                         SettingsView_(path: $path)
                     }
@@ -76,16 +86,17 @@ struct NavigationButton: View {
 // MARK: -  Demo View
 struct DemoView_: View {
     @Binding var path: [AppView]
-    @Binding var isButtonEnabled: Bool
+    @Binding var isThirdButtonEnabled: Bool
+   
     
     var body: some View {
         ScrollView {
             VStack(spacing: 30) {
                 SimpleHoldDownButtonSection()
                 Divider()
-                ColoredHoldDownButtonSection(isButtonEnabled: $isButtonEnabled)
-                Toggle(isOn: $isButtonEnabled) {
-                    Text("HoldDownButton is " + (isButtonEnabled ? "free" : "Blocked"))
+                ColoredHoldDownButtonSection(isThirdButtonEnabled: $isThirdButtonEnabled)
+                Toggle(isOn: $isThirdButtonEnabled) {
+                    Text("HoldDownButton is " + (isThirdButtonEnabled ? "free" : "Blocked"))
                 }
                 .padding(1)
                 .tint(.blue)
@@ -156,45 +167,22 @@ struct SettingsView_: View {
 // MARK: -  HoldDownButton View with External Control
 struct HoldDownButtonView: View {
     @Binding var path: [AppView]
-    @Binding var isButtonEnabled: Bool
+    @Binding var isThirdButtonEnabled: Bool // NEW from V4.2.x
     @State private var extStatus: ButtonStatus? = nil
     
     var body: some View {
         VStack(spacing: 30) {
-            Text("NEW!")
-                .padding(20
-                )
-                .font(.title)
-                .fontWeight(.bold)
-                .foregroundColor(.red)
-            Text("HoldDownButton \nwith additional external control:")
-                .multilineTextAlignment(.center)
-            Spacer()
-            Divider()
-            Text("Normal control:")
+ 
+
+            Text("Button:")
             HoldDownButton(
                 externalStatus: $extStatus,
                 duration: 2,
-                /* statusTexts: [
-                 .start: "Start",
-                 .pause: "Pause",
-                 .stop:  "Stop",
-                 .ready: "Bereit"
-                 ],
-                 statusColors: [
-                 .start: .green,
-                 .pause: .orange,
-                 .stop:  .red,
-                 .ready: .gray
-                 ], */
-                //statusTextColor: .white,
                 onStateChange: { status in
                     print("Status changed: \(status)")
                 }
             )
-            .disabled(!isButtonEnabled)
-            
-            Divider()
+            .disabled(!isThirdButtonEnabled)
             
             Text("External control:")
             HStack {
@@ -207,14 +195,12 @@ struct HoldDownButtonView: View {
                     .cornerRadius(8)
                 }
             }
-            Toggle(isOn: $isButtonEnabled) {
-                Text("HoldDownButton is " + (isButtonEnabled ? "free" : "Blocked"))
+            Toggle(isOn: $isThirdButtonEnabled) {
+                Text("HoldDownButton is " + (isThirdButtonEnabled ? "free" : "Blocked"))
             }
-            .padding(35)
+            .padding(5)
             .tint(.blue)
             
-            Divider()
-            Spacer()
         }
     }
 }
@@ -236,7 +222,8 @@ private struct SimpleHoldDownButtonSection: View {
 }
 
 private struct ColoredHoldDownButtonSection: View {
-    @Binding var isButtonEnabled: Bool
+    @Binding var isThirdButtonEnabled: Bool// NEW from V4.2.x
+    
     var body: some View {
         VStack {
             Text("HoldDownButton colored:")
@@ -260,7 +247,7 @@ private struct ColoredHoldDownButtonSection: View {
                     print("Status geändert: \(status)")
                 }
             )
-            .disabled(!isButtonEnabled)
+            .disabled(!isThirdButtonEnabled)
         }
     }
 }
@@ -268,7 +255,6 @@ private struct ColoredHoldDownButtonSection: View {
 
 // MARK: -  Preview
 struct ContentView_Previews: PreviewProvider {
-    @State static var isButtonEnabled: Bool = true
     
     static var previews: some View {
         ContentView()
