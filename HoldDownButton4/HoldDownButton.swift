@@ -2,12 +2,12 @@
 //  HoldDownButton.swift
 //  HoldDownButton4
 //
-//  Created by Juergen Schulz on 18.11.25.
+//  Created by Juergen Schulz on 20.11.25.
 //  Special Thanks for the template from Akbarshah Jumanazarov on 3/21/24. (KS_LongPressButtpn)
 //
 //  A button with start/pause/stop status and a loading bar.
 //  A short tap starts/pauses, a long press stops and triggers an action.
-//  A
+//  A external binding allows control from outside.
 
 
 import SwiftUI
@@ -67,6 +67,9 @@ class HoldTimer: ObservableObject {
         progress = 0
         elapsed = 0
     }
+    deinit { //* NEU ab V4.1.x
+            timer?.cancel()
+        }
 }
 
 // MARK: - HoldDownButton View
@@ -77,7 +80,7 @@ public struct HoldDownButton: View {
     @Environment(\.isEnabled) private var isEnabled //* NEU ab V4.1.x
     
     // MARK: -  External specifications, Please note the order!
-    @Binding var externalStatus: ButtonStatus?
+    @Binding public var externalStatus: ButtonStatus?
     public var duration: CGFloat = 3
     public var statusTexts: [ButtonStatus: String]? = nil
     public var statusColors: [ButtonStatus: Color]? = nil
@@ -191,7 +194,7 @@ public struct HoldDownButton: View {
     var tapGesture: some Gesture {
         TapGesture()
             .onEnded {
-                if isEnabled {
+                if isEnabled { //* NEU ab V4.1.x
                     if effectiveStatus == .start {
                         internalStatus = .pause
                     } else {

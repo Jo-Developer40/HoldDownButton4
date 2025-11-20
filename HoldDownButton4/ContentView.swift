@@ -2,7 +2,7 @@
 //  ContentView.swift
 //  HoldDownButton4
 //
-//  Created by Juergen Schulz on 18.11.25.
+//  Created by Juergen Schulz on 20.11.25.
 //  
 //
 
@@ -77,7 +77,6 @@ struct NavigationButton: View {
 struct DemoView_: View {
     @Binding var path: [AppView]
     @Binding var isButtonEnabled: Bool
-    @State private var showArrow = true
     
     var body: some View {
         ScrollView {
