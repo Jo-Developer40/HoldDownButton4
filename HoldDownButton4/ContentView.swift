@@ -23,7 +23,7 @@ struct ContentView: View {
     @State private var firstButtonStatus: ButtonStatus? = nil // NEW from V4.2.x
     
     @State private var isSecondButtonEnabled: Bool = true // NEW from V4.2.x
-    @State private var secondButtonStatus: ButtonStatus? = nil // NEW from V4.2.x
+    @State private var firstButtonStatus: ButtonStatus? = nil // NEW from V4.2.x
    
     @State private var isThirdButtonEnabled: Bool = true // NEW from V4.2.x
     @State private var thirdButtonStatus: ButtonStatus? = nil // NEW from V4.2.x
@@ -32,9 +32,9 @@ struct ContentView: View {
         NavigationStack(path: $path) {
             ZStack {
                 VStack(spacing: 35) {
-                    HoldDownButtonView(path: $path, isThirdButtonEnabled: $isFirstButtonEnabled)
+                    HoldDownButtonView(path: [AppView], isButtonEnabled: firstButtonStatus, extStatus: ButtonStatus?)
                     
-                    HoldDownButtonView(path: $path, isThirdButtonEnabled: $isSecondButtonEnabled)
+                    HoldDownButtonView(path: [AppView], isButtonEnabled: secondButtonStatus, extStatus: ButtonStatus?)
                 }
                 .navigationTitle("Demo 1")
                 .navigationBarTitleDisplayMode(.inline)
