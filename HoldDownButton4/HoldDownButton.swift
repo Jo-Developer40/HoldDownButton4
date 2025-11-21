@@ -77,10 +77,11 @@ public struct HoldDownButton: View {
     @State private var internalStatus: ButtonStatus = .ready
     @State private var isHolding = false /// hold Button (for Animation)
     @StateObject private var holdTimer = HoldTimer() /// Timer for Progress bar
-    @Environment(\.isEnabled) private var isEnabled //* NEU ab V4.1.x
+    //@Environment(\.isEnabled) private var isEnabled //* NEU ab V4.1.x
     
     // MARK: -  External specifications, Please note the order!
     @Binding public var externalStatus: ButtonStatus?
+    public var isEnabled: Bool  //* NEU ab V4.1.x
     public var duration: CGFloat = 3
     public var statusTexts: [ButtonStatus: String]? = nil
     public var statusColors: [ButtonStatus: Color]? = nil
@@ -89,6 +90,7 @@ public struct HoldDownButton: View {
     
     // MARK: -  Initializer for external specifications
     public init( //* NEU ab V4.1.x
+        isEnabled: Bool = true, //* NEU ab V4.2.x
         externalStatus: Binding<ButtonStatus?>,
         duration: CGFloat = 3,
         statusTexts: [ButtonStatus: String]? = nil,
@@ -96,6 +98,7 @@ public struct HoldDownButton: View {
         statusTextColor: Color = .white,
         onStateChange: @escaping (ButtonStatus) -> Void = { _ in }
     ) {
+        self.isEnabled = isEnabled //* NEU ab V4.2.x
         self._externalStatus = externalStatus
         self.duration = duration
         self.statusTexts = statusTexts
@@ -172,15 +175,16 @@ public struct HoldDownButton: View {
                 .opacity(isEnabled ? 1.0 : 0.6) //* NEU ab V4.1.x
                 .gesture(tapGesture.exclusively(before: longPressGesture))
             
+            /*
             // Status display below the button (optional)
             Text("Status: \(effectiveStatus.rawValue)")
                 .font(.headline)
                 .foregroundStyle(.red)
                 .background(.white)
                 .padding(.top, 8)
+             */
             
         }
-        // Initialization during display
         .onAppear {
             holdTimer.reset()
             internalStatus = .ready
